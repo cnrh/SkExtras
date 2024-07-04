@@ -1,86 +1,54 @@
 package org.cnrh.skextras;
 
 import ch.njol.skript.Skript;
-import ch.njol.skript.SkriptAddon;
-
-import org.bukkit.command.CommandExecutor;
-import org.cnrh.skextras.commands.SkExtrasCmd;
-import org.cnrh.skextras.listeners.PlayerJoin;
-import org.cnrh.skextras.utils.*;
-
 import org.bstats.bukkit.Metrics;
-
+import org.bstats.charts.SimplePie;
+import org.cnrh.skextras.commands.SkExtrasCmd;
+import org.cnrh.skextras.utils.*;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.*;
 
 public class SkExtras extends JavaPlugin {
 
     private static SkExtras instance;
-    private String version;
-    private PluginManager pluginManager;
-    private SkriptAddon addon;
     private boolean latest = true;
+    private Loader loader = null;
+    private String version;
     private final DecimalFormat df = new DecimalFormat("0.00");
 
+    public SkExtras(){}
+
+    @SuppressWarnings("deprecation")
     @Override
     public void onEnable() {
         long start = System.currentTimeMillis();
         instance = this;
-        pluginManager = this.getServer().getPluginManager();
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        String version = getDescription().getVersion();
         version = this.getDescription().getVersion();
-        if (!this.isSkriptEnabled()) {
+
+        this.loader = new Loader(this);
+        if (!loader.canLoadPlugin()) {
             pluginManager.disablePlugin(this);
             return;
         }
 
-        addon = Skript.registerAddon(this);
+        loadCommands();
+        loadMetrics();
 
-        this.registerListeners(new PlayerJoin());
-        this.loadElements();
-        this.loadCommands();
-
-        long fin = System.currentTimeMillis() - start;
-        Utils.log((Utils.colored(Utils.getPrefix() + " loaded v" + version + " in " + df.format(fin / 1000.0) + " seconds (" +
-                fin + "ms)")));
+        new UpdateChecker(this);
+        Utils.log("&aSuccessfully enabled v%s &7in &d%.2f seconds", version, (float) (System.currentTimeMillis() - start) / 1000);
     }
 
     private void loadCommands() {
-        Objects.requireNonNull(getCommand("skextras")).setExecutor((CommandExecutor) new SkExtrasCmd());
+        getCommand("skextras").setExecutor(new SkExtrasCmd(this));
     }
 
-    private void loadElements() {
-        try {
-            addon.loadClasses("com.cnrh.skextras.elements",
-                    "expressions",
-                    "effects",
-                    "events",
-                    "conditions");
-        } catch (IOException ex) {
-            //Console.info("Something went horribly wrong!");
-            //ex.printStackTrace();
-        }
-    }
-
-    private boolean isSkriptEnabled() {
-        Plugin skript = pluginManager.getPlugin("Skript");
-        if (skript == null) return false;
-        if (!skript.isEnabled()) return false;
-        return Skript.isAcceptRegistrations();
-    }
-
-    private void registerListeners(Listener... listeners) {
-        Arrays.stream(listeners).forEach(listener -> this.pluginManager.registerEvents(listener, this));
-    }
-
-    public String getVersion() {
-        return version;
+    private void loadMetrics() {
+        Metrics metrics = new Metrics(this, 22531);
+        metrics.addCustomChart(new SimplePie("skript_version", () -> Skript.getVersion().toString()));
     }
 
     public static SkExtras getInstance() {
@@ -89,5 +57,9 @@ public class SkExtras extends JavaPlugin {
 
     public boolean isLatest() {
         return latest;
+    }
+
+    public String getVersion() {
+        return version;
     }
 }

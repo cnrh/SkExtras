@@ -2,7 +2,15 @@ name: SkExtras
 version: '${project.version}'
 main: org.cnrh.skextras.SkExtras
 api-version: '1.20'
-load: STARTUP
-depend: [Skript]
+depend:
+  - Skript
 authors: [cnrh]
 description: This is just a few extra features for my Server.
+commands:
+  skextras:
+    description: Main command
+    permission: skextras.admin
+permissions:
+  skextras.admin:
+    default: op
+    description: Permission to use the commands and stuff.

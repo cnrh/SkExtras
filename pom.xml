@@ -32,6 +32,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>3.2.4</version>
+          <configuration>
+              <relocations>
+                  <relocation>
+                      <pattern>org.bstats</pattern>
+                      <shadedPattern>org.cnrh.skextras</shadedPattern>
+                  </relocation>
+              </relocations>
+          </configuration>
         <executions>
           <execution>
             <phase>package</phase>
@@ -76,6 +84,7 @@
           <groupId>com.github.SkriptLang</groupId>
           <artifactId>Skript</artifactId>
           <version>2.9.0-pre1</version>
+          <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>org.bstats</groupId>

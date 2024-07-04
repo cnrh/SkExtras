@@ -1,15 +1,19 @@
 package org.cnrh.skextras.utils;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.CommandSender;
 
 public class Utils {
     private Utils(){}
+
+    private static final boolean SKRIPT_IS_THERE = Bukkit.getPluginManager().getPlugin("Skript") != null;
+    private static final Pattern HEX_PATTERN = Pattern.compile("<#([A-Fa-f\\d]){6}>");
+    private static final String PREFIX = "&d[SkExtras] ";
 
     private static final TreeMap<Integer, String> ROMAN_NUMERALS = new TreeMap<>();
 
@@ -36,43 +40,37 @@ public class Utils {
     }
 
     public static String mainColor() {
-        return "&#694EFF";
+        return "<#694EFF>";
     }
 
     public static String getPrefix() {
-        return colored(mainColor() + "&lꜱᴋᴇxᴛʀᴀꜱ &8| ");
+        return getColString(mainColor() + "&lꜱᴋᴇxᴛʀᴀꜱ &8| ");
     }
 
-    public static Component toComponent(String text) {
-        return LegacyComponentSerializer.legacySection().deserialize(text);
-    }
-
-    private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
-    public static String colored(String text) {
-        text = text.replace("&", "§");
-        StringBuilder sb = new StringBuilder();
-        Matcher matcher = HEX_COLOR_PATTERN.matcher(text);
-
-        int lastEnd = 0;
-        while (matcher.find()) {
-            sb.append(text, lastEnd, matcher.start());
-            sb.append('§').append('x');
-            char[] hexChars = matcher.group(1).toCharArray();
-            for (char hexChar : hexChars) {
-                sb.append('§').append(hexChar);
+    @SuppressWarnings("deprecation")
+    public static String getColString(String string) {
+        Matcher matcher = HEX_PATTERN.matcher(string);
+        if (SKRIPT_IS_THERE) {
+            while (matcher.find()) {
+                final ChatColor hexColor = ChatColor.of(matcher.group().substring(1, matcher.group().length() - 1));
+                final String before = string.substring(0, matcher.start());
+                final String after = string.substring(matcher.end());
+                string = before + hexColor + after;
+                matcher = HEX_PATTERN.matcher(string);
             }
-            lastEnd = matcher.end();
+        } else {
+            string = HEX_PATTERN.matcher(string).replaceAll("");
         }
-        sb.append(text.substring(lastEnd));
-        return toString(LegacyComponentSerializer.legacySection().deserialize(sb.toString()));
+        return ChatColor.translateAlternateColorCodes('&', string);
     }
 
-    public static String toString(Component component) {
-        return LegacyComponentSerializer.legacySection().serialize(component);
+    public static void sendColMsg(CommandSender receiver, String format, Object... objects) {
+        receiver.sendMessage(getColString(String.format(format, objects)));
     }
 
-    public static void log(String format) {
-        String log = String.format(format);
-        Bukkit.getConsoleSender().sendMessage(log);
+    public static void log(String format, Object... objects) {
+        String log = String.format(format, objects);
+        Bukkit.getConsoleSender().sendMessage(getColString(PREFIX + log));
     }
+
 }
