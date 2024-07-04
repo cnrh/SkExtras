@@ -1,7 +1,5 @@
-NOTE: I copied SkBee and SkJade for the plugin loading/other things. I only made this plugin to use for my server.
-
-
 # SkExtras
+NOTE: I copied SkBee and SkJade for the plugin loading/other things. I only made this plugin to use for my server.
 
 # Features
 - Roman numeral converter
