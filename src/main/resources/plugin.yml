@@ -1,0 +1,8 @@
+name: SkExtras
+version: '${project.version}'
+main: org.cnrh.skextras.SkExtras
+api-version: '1.20'
+load: STARTUP
+depend: [Skript]
+authors: [cnrh]
+description: This is just a few extra features for my Server.
