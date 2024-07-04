@@ -21,8 +21,8 @@ public class PlayerJoin implements Listener {
             player.sendMessage(colored(Utils.getPrefix() + "&fYou are running the latest version of &fSkExtras&7."));
         } else {
             player.sendMessage(colored(Utils.getPrefix() + "&fYou are not running the latest version!"));
-            Component message = colored(Utils.getPrefix() + "&7&oClick me to go to the latest version!");
-            Component hoverText = colored("&7&oClick here!");
+            Component message = Utils.toComponent(colored(Utils.getPrefix() + "&7&oClick me to go to the latest version!"));
+            Component hoverText = Utils.toComponent(colored("&7&oClick here!"));
             Component finalMessage = message.hoverEvent(HoverEvent.showText(hoverText))
                     .clickEvent(ClickEvent.openUrl("https://www.github.com/cnrh/SkExtras/releases/latest"));
             player.sendMessage(finalMessage);

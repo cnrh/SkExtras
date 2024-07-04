@@ -2,6 +2,7 @@ package org.cnrh.skextras.utils;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Bukkit;
 
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -38,12 +39,16 @@ public class Utils {
         return "&#694EFF";
     }
 
-    public static Component getPrefix() {
+    public static String getPrefix() {
         return colored(mainColor() + "&lꜱᴋᴇxᴛʀᴀꜱ &8| ");
     }
 
+    public static Component toComponent(String text) {
+        return LegacyComponentSerializer.legacySection().deserialize(text);
+    }
+
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("&#([A-Fa-f0-9]{6})");
-    public static Component colored(String text) {
+    public static String colored(String text) {
         text = text.replace("&", "§");
         StringBuilder sb = new StringBuilder();
         Matcher matcher = HEX_COLOR_PATTERN.matcher(text);
@@ -59,6 +64,15 @@ public class Utils {
             lastEnd = matcher.end();
         }
         sb.append(text.substring(lastEnd));
-        return LegacyComponentSerializer.legacySection().deserialize(sb.toString());
+        return toString(LegacyComponentSerializer.legacySection().deserialize(sb.toString()));
+    }
+
+    public static String toString(Component component) {
+        return LegacyComponentSerializer.legacySection().serialize(component);
+    }
+
+    public static void log(String format) {
+        String log = String.format(format);
+        Bukkit.getConsoleSender().sendMessage(log);
     }
 }

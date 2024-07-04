@@ -47,8 +47,8 @@ public class SkExtras extends JavaPlugin {
         this.loadCommands();
 
         long fin = System.currentTimeMillis() - start;
-        Console.info(Utils.colored(Utils.getPrefix() + " loaded v" + version + " in " + df.format(fin / 1000.0) + " seconds (" +
-                fin + "ms)"));
+        Utils.log((Utils.colored(Utils.getPrefix() + " loaded v" + version + " in " + df.format(fin / 1000.0) + " seconds (" +
+                fin + "ms)")));
     }
 
     private void loadCommands() {
@@ -63,8 +63,8 @@ public class SkExtras extends JavaPlugin {
                     "events",
                     "conditions");
         } catch (IOException ex) {
-            Console.info("Something went horribly wrong!");
-            ex.printStackTrace();
+            //Console.info("Something went horribly wrong!");
+            //ex.printStackTrace();
         }
     }
 
