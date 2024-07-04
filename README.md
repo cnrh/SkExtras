@@ -7,3 +7,7 @@ NOTE: I copied SkBee and SkJade for the plugin loading/other things. I only made
 - Roman numeral converter
 - Use "||" for doing multiple if statements in 1 line or other stuff
 - Other shit
+
+
+
+# i aint working on this anymore ill just wait for skjade to update to 1.20
